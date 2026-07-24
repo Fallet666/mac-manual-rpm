@@ -207,7 +207,7 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.standardWindowButton(.zoomButton)?.isHidden = true
         panel.isMovable = false
         panel.isReleasedWhenClosed = false
-        panel.hidesOnDeactivate = false
+        panel.hidesOnDeactivate = true
         panel.worksWhenModal = true
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
