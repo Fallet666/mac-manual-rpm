@@ -192,7 +192,6 @@ int main(int argc, char** argv) {
     std::unordered_map<uint32_t, float> overrides;
     bool overrides_dirty = false;
     std::vector<ClientState> clients;
-    uint64_t last_heartbeat = 0;
     uint64_t last_reconciliation = 0;
     uint64_t last_temperature_control = 0;
     uint64_t last_temperature_cache = 0;
@@ -211,7 +210,6 @@ int main(int argc, char** argv) {
     signal(SIGTERM, handle_signal);
     signal(SIGPIPE, SIG_IGN);
 
-    last_heartbeat = now_ms();
     last_reconciliation = now_ms();
     last_temperature_control = now_ms();
     last_temperature_cache = 0;
@@ -295,7 +293,6 @@ int main(int argc, char** argv) {
                                 overrides[fan_idx] = speed;
                                 backend->set_fan_target_speed(fan_idx, speed);
                                 overrides_dirty = true;
-                                last_heartbeat = now;
                                 response = "OK";
                             }
                         } else if (cmd == "SETP" && parts.size() >= 3) {
@@ -316,7 +313,6 @@ int main(int argc, char** argv) {
                                 } else {
                                     response = "ERR Fan not found";
                                 }
-                                last_heartbeat = now;
                             }
                         } else if (cmd == "SETALL" && parts.size() >= 2) {
                             float speed;
@@ -330,7 +326,6 @@ int main(int argc, char** argv) {
                                     backend->set_fan_target_speed(fan.index, speed);
                                 }
                                 overrides_dirty = true;
-                                last_heartbeat = now;
                                 response = "OK";
                             }
                         } else if (cmd == "WRITE" && parts.size() >= 3) {
@@ -353,7 +348,6 @@ int main(int argc, char** argv) {
                                 if (overrides.empty()) {
                                     control_mode = ControlMode::Auto;
                                 }
-                                last_heartbeat = now;
                                 response = ok ? "OK" : "ERR Failed to set auto mode";
                             }
                         } else if (cmd == "AUTOALL") {
@@ -368,7 +362,6 @@ int main(int argc, char** argv) {
                             overrides.clear();
                             overrides_dirty = true;
                             control_mode = ControlMode::Auto;
-                            last_heartbeat = now;
                             response = ok ? "OK" : "ERR Failed to set auto mode";
                         } else if (cmd == "MODE" && parts.size() >= 2) {
                             if (parts[1] == "AUTO") {
@@ -401,9 +394,7 @@ int main(int argc, char** argv) {
                             } else {
                                 response = "ERR Invalid mode";
                             }
-                            last_heartbeat = now;
                         } else if (cmd == "HEARTBEAT") {
-                            last_heartbeat = now;
                             response = "OK";
                         } else if (cmd == "VERSION") {
                             response = "VERSION " + std::string(APP_VERSION);
@@ -522,19 +513,6 @@ int main(int argc, char** argv) {
                 }
             }
             overrides_dirty = false;
-        }
-
-        // --- Watchdog (every cycle, check if expired) ---
-        if (control_mode == ControlMode::ManualRPM && !overrides.empty() &&
-            (now - last_heartbeat) > (uint64_t)WATCHDOG_TIMEOUT_SECONDS * 1000)
-        {
-            for (auto& [idx, _] : overrides) {
-                backend->set_fan_manual_mode(idx, false);
-            }
-            overrides.clear();
-            overrides_dirty = true;
-            control_mode = ControlMode::Auto;
-            last_heartbeat = now;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));

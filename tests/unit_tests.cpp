@@ -88,7 +88,6 @@ void TestDaemonConstants() {
            "socket path stable");
     Expect(std::string(DAEMON_PID_PATH) == "/tmp/ventd.pid",
            "pid path stable");
-    Expect(WATCHDOG_TIMEOUT_SECONDS == 10, "watchdog timeout 10s");
     Expect(RECONCILIATION_INTERVAL_MS == 300, "reconciliation 300ms");
     Expect(MAX_FANS == 16, "max fans 16");
 }
