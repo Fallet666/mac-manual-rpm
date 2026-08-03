@@ -7,7 +7,6 @@
 <p align="center">
   <a href="https://github.com/Fallet666/vent/releases/latest"><img src="https://img.shields.io/github/v/release/Fallet666/vent?style=flat-square&logo=github" alt="Release"></a>
   <a href="https://github.com/Fallet666/vent/releases"><img src="https://img.shields.io/github/downloads/Fallet666/vent/total?style=flat-square&logo=github" alt="Downloads"></a>
-  <a href="https://github.com/Fallet666/vent/actions/workflows/ci.yml"><img src="https://github.com/Fallet666/vent/actions/workflows/ci.yml/badge.svg?style=flat-square" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/macOS-12+-black?style=flat-square&logo=apple" alt="macOS 12+">
   <img src="https://img.shields.io/badge/Apple%20Silicon-✓-brightgreen?style=flat-square&logo=apple" alt="Apple Silicon">
